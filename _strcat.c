@@ -1,5 +1,11 @@
 #include "main.h"
 
+/**
+ * _strcat - str concatination.
+ * @dest: destination.
+ * @src: source.
+ * Return: dest_start.
+ */
 char *_strcat(char *dest, const char *src)
 {
 	char *dest_start;

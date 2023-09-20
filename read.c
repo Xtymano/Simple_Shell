@@ -32,48 +32,54 @@ int tokenize_input(char *line, char *tokens[], char *delimiters)
 	return (token_count);
 }
 
-bool _strsub(const char *haystack, const char *needle) {
- 	 const char *temp_haystack = haystack;
-         const char *temp_needle = needle;
-	
-	while (*haystack != '\0') {
+/**
+ * _strsub - substring.
+ * @haystack: full str
+ * @needle: sub string
+ * Return: true on success
+ */
+bool _strsub(const char *haystack, const char *needle)
+{
+	const char *temp_haystack = haystack;
+	const char *temp_needle = needle;
 
-        while (*temp_needle != '\0' && *temp_haystack == *temp_needle) {
-            temp_haystack++;
-            temp_needle++;
-        }
-
-        if (*temp_needle == '\0') {
-            return true;
-        }
-
-        haystack++;
-    }
-
-    return false;
+	while (*haystack != '\0')
+	{
+		while (*temp_needle != '\0' && *temp_haystack == *temp_needle)
+		{
+			temp_haystack++;
+			temp_needle++;
+		}
+		if (*temp_needle == '\0')
+		{
+			return (true);
+		}
+		haystack++;
+	}
+	return (false);
 }
+
 /**
  * execute_builtin_exit - exit from shell.
+ * @line: the full input.
  */
 void execute_builtin_exit(char *line)
 {
+	int i;
+	char *token;
 
-	char *token = strtok(line, " ");
-
-    if (token != NULL && strcmp(token, "exit") == 0) 
-    {
-        token = strtok(NULL, " "); 
-
-        if (token != NULL) {
-            /*exitStatus = atoi(token); 
-
-            if (exitStatus == 0) {
-                exit(2); 
-            } else {*/
-                exit(2); 
-            }
-        } else {
-            exit(0); 
-        }
-    
+	token = strtok(line, " ");
+	for (i = 0; token != NULL; i++)
+	{
+		strtok(NULL, " ");
+	}
+	if (i > 1)
+	{
+		if (_strsub(line, "exit") == true)
+			exit(2);
+	}
+	else
+	{
+		exit(0);
+	}
 }
