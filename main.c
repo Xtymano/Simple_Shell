@@ -98,12 +98,12 @@ void execute_command(char *tokens[], char **env, int token_count)
 	if (executable == NULL)
 	{
 		_strcpy(err, "./hsh: ");
-		_strcat(err, " 1: ");
+		_strcat(err, "1: ");
 		_strcat(err, tokens[0]);
 		_strcat(err, ": not found\n");
 		write(STDERR_FILENO, err, _strlen(err));
 		free(err);
-		exit(EXIT_FAILURE);
+		exit(127);
 	}
 	else
 	{
@@ -163,9 +163,9 @@ int main(int argc, char *argv[], char **env)
 		token_count = tokenize_input(line, tokens, " ");
 		if (token_count == 0)
 			continue;
-		if (_strcmp(tokens[0], "exit") == 0)
+		else if (_strsub(line, "exit") == true)
 		{
-			execute_builtin_exit();
+			execute_builtin_exit(line);
 		}
 		else if (_strcmp(tokens[0], "cd") == 0)
 		{

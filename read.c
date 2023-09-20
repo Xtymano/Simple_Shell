@@ -32,10 +32,48 @@ int tokenize_input(char *line, char *tokens[], char *delimiters)
 	return (token_count);
 }
 
+bool _strsub(const char *haystack, const char *needle) {
+ 	 const char *temp_haystack = haystack;
+         const char *temp_needle = needle;
+	
+	while (*haystack != '\0') {
+
+        while (*temp_needle != '\0' && *temp_haystack == *temp_needle) {
+            temp_haystack++;
+            temp_needle++;
+        }
+
+        if (*temp_needle == '\0') {
+            return true;
+        }
+
+        haystack++;
+    }
+
+    return false;
+}
 /**
  * execute_builtin_exit - exit from shell.
  */
-void execute_builtin_exit(void)
+void execute_builtin_exit(char *line)
 {
-	exit(0);
+
+	char *token = strtok(line, " ");
+
+    if (token != NULL && strcmp(token, "exit") == 0) 
+    {
+        token = strtok(NULL, " "); 
+
+        if (token != NULL) {
+            /*exitStatus = atoi(token); 
+
+            if (exitStatus == 0) {
+                exit(2); 
+            } else {*/
+                exit(2); 
+            }
+        } else {
+            exit(0); 
+        }
+    
 }
