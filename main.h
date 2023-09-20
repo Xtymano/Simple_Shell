@@ -25,5 +25,6 @@ ssize_t read_input(char **line, size_t *len);
 void display_prompt(void);
 void sigint_handler(int signo);
 void display(const char *str);
+char *_strchr(const char *str, int character);
 
 #endif /*MAIN_H*/

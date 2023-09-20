@@ -49,23 +49,33 @@ char *find_executable(char *tokens[], char **env)
 	char path_buffer[MAX_PATH];
 
 	(void)env;
-	if (path_env != NULL)
+	if (_strchr(tokens[0], '/') != NULL)
 	{
-		path = _strdup(path_env);
-		token = strtok(path, ":");
-		while (token != NULL)
+		if (access(tokens[0], X_OK) == 0)
 		{
-			_strcpy(path_buffer, token);
-			_strcat(path_buffer, "/");
-			_strcat(path_buffer, tokens[0]);
-			if (access(path_buffer, X_OK) == 0)
-			{
-				executable = _strdup(path_buffer);
-				break;
-			}
-			token = strtok(NULL, ":");
+			executable = _strdup(tokens[0]);
 		}
-		free(path);
+	}
+	else
+	{
+		if (path_env != NULL)
+		{
+			path = _strdup(path_env);
+			token =	strtok(path, ":");
+			while (token != NULL)
+			{
+				_strcpy(path_buffer, token);
+				_strcat(path_buffer, "/");
+				_strcat(path_buffer, tokens[0]);
+				if (access(path_buffer, X_OK) == 0)
+				{
+					executable = _strdup(path_buffer);
+					break;
+				}
+				token = strtok(NULL, ":");
+			}
+			free(path);
+		}
 	}
 	return (executable);
 }
@@ -88,6 +98,7 @@ void execute_command(char *tokens[], char **env, int token_count)
 	{
 		display("Command not found: ");
 		display(tokens[0]);
+		/*perror(tokens[0]);*/
 		display("\n");
 	}
 	else
@@ -142,9 +153,7 @@ int main(int argc, char *argv[], char **env)
 		if (read == -1)
 			break;
 		if (line[_strlen(line) - 1] == '\n')
-		{
 			line[_strlen(line) - 1] = '\0';
-		}
 		token_count = tokenize_input(line, tokens, " ");
 		if (token_count == 0)
 			continue;
