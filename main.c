@@ -90,16 +90,20 @@ void execute_command(char *tokens[], char **env, int token_count)
 {
 	char *executable;
 	char *exec_args[MAX_TOKENS];
+	char *err = malloc(100);
 	int i;
 	pid_t pid;
 
 	executable = find_executable(tokens, env);
 	if (executable == NULL)
 	{
-		display("Command not found: ");
-		display(tokens[0]);
-		/*perror(tokens[0]);*/
-		display("\n");
+		_strcpy(err, "./hsh: ");
+		_strcat(err, " 1: ");
+		_strcat(err, tokens[0]);
+		_strcat(err, ": not found\n");
+		write(STDERR_FILENO, err, _strlen(err));
+		free(err);
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
@@ -113,6 +117,7 @@ void execute_command(char *tokens[], char **env, int token_count)
 			exec_args[token_count] = NULL;
 			execve(executable, exec_args, env);
 			perror(executable);
+			free(executable);
 			exit(EXIT_FAILURE);
 		}
 		else if (pid < 0)
@@ -122,8 +127,9 @@ void execute_command(char *tokens[], char **env, int token_count)
 		else
 		{
 			waitpid(pid, NULL, 0);
+			free(executable);
 		}
-		free(executable);
+		free(err);
 	}
 }
 

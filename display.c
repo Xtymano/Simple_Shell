@@ -25,6 +25,6 @@ void sigint_handler(int signo)
  */
 void display_prompt(void)
 {
-	display("($) ");
+	display("");
 }
 

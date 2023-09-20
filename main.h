@@ -26,5 +26,6 @@ void display_prompt(void);
 void sigint_handler(int signo);
 void display(const char *str);
 char *_strchr(const char *str, int character);
+void execute_command(char *tokens[], char **env, int token_count);
 
 #endif /*MAIN_H*/
