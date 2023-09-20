@@ -19,5 +19,11 @@ int _strcmp(const char *str1, const char *str2);
 char *_strdup(const char *src);
 char *_strcpy(char *dest, const char *src);
 char *_strcat(char *dest, const char *src);
+void execute_builtin_exit(void);
+int tokenize_input(char *line, char *tokens[], char *delimiters);
+ssize_t read_input(char **line, size_t *len);
+void display_prompt(void);
+void sigint_handler(int signo);
+void display(const char *str);
 
 #endif /*MAIN_H*/

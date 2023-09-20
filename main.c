@@ -1,46 +1,9 @@
 #include "main.h"
 
-void display(const char *str)
-{
-	write(STDOUT_FILENO, str, strlen(str));
-}
-
-void sigint_handler(int signo)
-{
-	(void)signo;
-
-	display("\n");
-}
-
-void display_prompt()
-{
-	display("($) ");
-}
-
-ssize_t read_input(char **line, size_t *len)
-{
-	return (getline(line, len, stdin));
-}
-
-int tokenize_input(char *line, char *tokens[], char *delimiters)
-{
-	int token_count = 0;
-	char *token;
-
-	token = strtok(line, delimiters);
-	while (token != NULL)
-	{
-		tokens[token_count++] = token;
-		token = strtok(NULL, delimiters);
-	}
-	return (token_count);
-}
-
-void execute_builtin_exit()
-{
-	exit(0);
-}
-
+/**
+ * execute_builtin_cd - execute cd.
+ * @tokens: array of strings.
+ */
 void execute_builtin_cd(char *tokens[])
 {
 	if (tokens[1] == NULL)
@@ -56,6 +19,10 @@ void execute_builtin_cd(char *tokens[])
 	}
 }
 
+/**
+ * execute_builtin_env - execute env.
+ * @env: array of strings.
+ */
 void execute_builtin_env(char *env[])
 {
 	char **env_ptr;
@@ -67,6 +34,12 @@ void execute_builtin_env(char *env[])
 	}
 }
 
+/**
+ * find_executable - search for the executable.
+ * @tokens: array of strings.
+ * @env: array of strings.
+ * Return: the executable.
+ */
 char *find_executable(char *tokens[], char **env)
 {
 	char *executable = NULL;
@@ -75,6 +48,7 @@ char *find_executable(char *tokens[], char **env)
 	char *token;
 	char path_buffer[MAX_PATH];
 
+	(void)env;
 	if (path_env != NULL)
 	{
 		path = _strdup(path_env);
@@ -82,7 +56,7 @@ char *find_executable(char *tokens[], char **env)
 		while (token != NULL)
 		{
 			_strcpy(path_buffer, token);
-		 	_strcat(path_buffer, "/");
+			_strcat(path_buffer, "/");
 			_strcat(path_buffer, tokens[0]);
 			if (access(path_buffer, X_OK) == 0)
 			{
@@ -96,12 +70,18 @@ char *find_executable(char *tokens[], char **env)
 	return (executable);
 }
 
+/**
+ * execute_command - command execution.
+ * @tokens: array of strings.
+ * @env: array of strings.
+ * @token_count: nu,ber of tokens.
+ */
 void execute_command(char *tokens[], char **env, int token_count)
 {
 	char *executable;
 	char *exec_args[MAX_TOKENS];
 	int i;
-	char *str;
+	pid_t pid;
 
 	executable = find_executable(tokens, env);
 	if (executable == NULL)
@@ -112,7 +92,7 @@ void execute_command(char *tokens[], char **env, int token_count)
 	}
 	else
 	{
-		pid_t pid = fork();
+		pid = fork();
 		if (pid == 0)
 		{
 			for (i = 0; tokens[i] != NULL; i++)
@@ -136,6 +116,13 @@ void execute_command(char *tokens[], char **env, int token_count)
 	}
 }
 
+/**
+ * main - entry point.
+ * @argc: argument count.
+ * @argv: argument vector.
+ * @env: array of stings.
+ * Return: (0) on success.
+ */
 int main(int argc, char *argv[], char **env)
 {
 	char *line = NULL;
@@ -144,6 +131,8 @@ int main(int argc, char *argv[], char **env)
 	ssize_t read;
 	char *tokens[MAX_TOKENS];
 
+	(void)argc;
+	(void)argv;
 	signal(SIGINT, sigint_handler);
 
 	while (1)
@@ -151,18 +140,14 @@ int main(int argc, char *argv[], char **env)
 		display_prompt();
 		read = read_input(&line, &len);
 		if (read == -1)
-		{
 			break;
-		}
 		if (line[_strlen(line) - 1] == '\n')
 		{
 			line[_strlen(line) - 1] = '\0';
 		}
 		token_count = tokenize_input(line, tokens, " ");
 		if (token_count == 0)
-		{
 			continue;
-		}
 		if (_strcmp(tokens[0], "exit") == 0)
 		{
 			execute_builtin_exit();
