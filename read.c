@@ -65,21 +65,12 @@ bool _strsub(const char *haystack, const char *needle)
  */
 void execute_builtin_exit(char *line)
 {
-	int i;
-	char *token;
-
-	token = strtok(line, " ");
-	for (i = 0; token != NULL; i++)
-	{
-		strtok(NULL, " ");
-	}
-	if (i > 1)
-	{
-		if (_strsub(line, "exit") == true)
-			exit(2);
-	}
-	else
+	if (_strcmp(line, "exit") == 0)
 	{
 		exit(0);
+	}
+	else if (_strsub(line, "/bin") == true)
+	{
+		exit(2);
 	}
 }
