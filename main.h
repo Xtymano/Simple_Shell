@@ -10,6 +10,8 @@
 #include <signal.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #define MAX_INPUT_SIZE 1024
 #define MAX_TOKENS 64

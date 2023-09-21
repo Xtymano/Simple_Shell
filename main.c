@@ -88,11 +88,12 @@ char *find_executable(char *tokens[], char **env)
  */
 void execute_command(char *tokens[], char **env, int token_count)
 {
-	char *executable;
+	char *executable = NULL;
 	char *exec_args[MAX_TOKENS];
 	char *err = malloc(100);
-	int i;
+	int i = 0;
 	pid_t pid;
+	int status = 0, exit_status = 0;
 
 	executable = find_executable(tokens, env);
 	if (executable == NULL)
@@ -103,7 +104,6 @@ void execute_command(char *tokens[], char **env, int token_count)
 		_strcat(err, ": not found\n");
 		write(STDERR_FILENO, err, _strlen(err));
 		free(err);
-		exit(127);
 	}
 	else
 	{
@@ -113,18 +113,32 @@ void execute_command(char *tokens[], char **env, int token_count)
 			for (i = 0; tokens[i] != NULL; i++)
 				exec_args[i] = tokens[i];
 			exec_args[token_count] = NULL;
-			execve(executable, exec_args, env);
-			perror(executable);
+			if (execve(executable, exec_args, env) == -1)
+			{
+				perror(executable);
+				errno = 127;
+				free(executable);
+				free(err);
+				exit(errno);
+			}
 			free(executable);
-			exit(EXIT_FAILURE);
 		}
-		else if (pid < 0)
-			perror("Fork failed");
-		else
+		/*else
 		{
 			waitpid(pid, NULL, 0);
 			free(executable);
+		}*/
+		else
+		{
+                	waitpid(pid, &status, 0);
+                	if (WIFEXITED(status))
+                	{
+                        	exit_status = WEXITSTATUS(status);
+                        	errno = exit_status;
+                	}
+			
 		}
+		free(executable);
 		free(err);
 	}
 }
@@ -140,9 +154,9 @@ int main(int argc, char *argv[], char **env)
 {
 	char *line = NULL;
 	size_t len = 0;
-	int token_count;
+	int token_count = 0;
 	ssize_t read;
-	char *tokens[MAX_TOKENS];
+	char *tokens[MAX_TOKENS] = {NULL, NULL};
 	int exitFlag = 0;
 
 	(void)argc;
