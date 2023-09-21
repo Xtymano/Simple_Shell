@@ -61,19 +61,22 @@ bool _strsub(const char *haystack, const char *needle)
 
 /**
  * execute_builtin_exit - exit from shell.
- * @line: the full input.
+ * @tokens: the full input.
  */
 void execute_builtin_exit(char *tokens[])
 {
 	int exit_status = 0;
 
-	if (tokens[1] != NULL)
-	{
-		if (!_isdigit (tokens[1][0]))
-		{
-			exit(2);
-		}
-		exit_status = _atoi(tokens[1]);
-	}
+	(void)tokens;
+	/**
+	 * if (tokens[1] != NULL)
+	* {
+	*	if (!_isdigit (tokens[1][0]))
+	*	{
+	*		exit(2);
+	*	}
+	*	exit_status = _atoi(tokens[1]);
+	* }
+	*/
 		exit(exit_status);
 }
