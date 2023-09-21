@@ -123,10 +123,9 @@ void execute_command(char *tokens[], char **env, int token_count)
 		else
 		{
 			waitpid(pid, NULL, 0);
-		/*	free(executable);*/
+			free(executable);
 		}
 		free(err);
-		free(executable);
 	}
 }
 
