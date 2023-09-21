@@ -69,11 +69,11 @@ void execute_builtin_exit(char *tokens[])
 
 	if (tokens[1] != NULL)
 	{
-		if (!isdigit (tokens[1][0]))
+		if (!_isdigit (tokens[1][0]))
 		{
 			exit(2);
 		}
-		exit_status = atoi(tokens[1]);
+		exit_status = _atoi(tokens[1]);
 	}
 		exit(exit_status);
 }
