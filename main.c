@@ -161,7 +161,7 @@ int main(int argc, char *argv[], char **env)
 		token_count = tokenize_input(line, tokens, " ");
 		if (token_count == 0)
 			continue;
-		else if (_strsub(line, "exit") == true)
+		else if (_strcmp(tokens[0], "exit") == 0)
 			execute_builtin_exit(tokens);
 		else if (_strcmp(tokens[0], "cd") == 0)
 			execute_builtin_cd(tokens);
