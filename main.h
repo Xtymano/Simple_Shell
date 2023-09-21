@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <ctype.h>
 #include <stdbool.h>
 
 #define MAX_INPUT_SIZE 1024
@@ -19,7 +20,7 @@ int _strcmp(const char *str1, const char *str2);
 char *_strdup(const char *src);
 char *_strcpy(char *dest, const char *src);
 char *_strcat(char *dest, const char *src);
-void execute_builtin_exit(char *line);
+void execute_builtin_exit(char *tokens[]);
 bool _strsub(const char *haystack, const char *needle);
 int tokenize_input(char *line, char *tokens[], char *delimiters);
 ssize_t read_input(char **line, size_t *len);

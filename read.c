@@ -63,14 +63,17 @@ bool _strsub(const char *haystack, const char *needle)
  * execute_builtin_exit - exit from shell.
  * @line: the full input.
  */
-void execute_builtin_exit(char *line)
+void execute_builtin_exit(char *tokens[])
 {
-	if (_strcmp(line, "exit") == 0)
+	int exit_status = 0;
+
+	if (tokens[1] != NULL)
 	{
-		exit(0);
+		if (!isdigit (tokens[1][0]))
+		{
+			exit(2);
+		}
+		exit_status = atoi(tokens[1]);
 	}
-	else if (_strsub(line, "/bin") == true)
-	{
-		exit(2);
-	}
+		exit(exit_status);
 }

@@ -144,12 +144,13 @@ int main(int argc, char *argv[], char **env)
 	int token_count;
 	ssize_t read;
 	char *tokens[MAX_TOKENS];
+	int exitFlag = 0;
 
 	(void)argc;
 	(void)argv;
 	signal(SIGINT, sigint_handler);
 
-	while (1)
+	while (!exitFlag)
 	{
 		display_prompt();
 		read = read_input(&line, &len);
@@ -161,7 +162,7 @@ int main(int argc, char *argv[], char **env)
 		if (token_count == 0)
 			continue;
 		else if (_strsub(line, "exit") == true)
-			execute_builtin_exit(line);
+			execute_builtin_exit(tokens);
 		else if (_strcmp(tokens[0], "cd") == 0)
 			execute_builtin_cd(tokens);
 		else if (_strcmp(tokens[0], "env") == 0)
