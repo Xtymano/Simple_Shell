@@ -142,7 +142,6 @@ int main(int argc, char *argv[], char **env)
 	size_t len = 0;
 	int token_count;
 	ssize_t read;
-	int i;
 	char *tokens[MAX_TOKENS];
 
 	(void)argc;
@@ -168,11 +167,6 @@ int main(int argc, char *argv[], char **env)
 			execute_builtin_env(env);
 		else
 			execute_command(tokens, env, token_count);
-
-		for (i = 0; i < token_count; i++)
-		{
-			free(tokens[i]);
-		}
 	}
 	free(line);
 	return (0);
