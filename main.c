@@ -4,19 +4,44 @@
  * execute_builtin_cd - execute cd.
  * @tokens: array of strings.
  */
-void execute_builtin_cd(char *tokens[])
+int execute_builtin_cd(char *tokens[])
 {
+	char *new_dir;
+	char *oldpwd;
+
 	if (tokens[1] == NULL)
 	{
-		display("Usage: cd <directory>\n");
+		new_dir = getenv("HOME");
+	}
+	else if (strcmp(tokens[1], "-") == 0)
+	{
+		oldpwd = getenv("OLDPWD");
+		if (oldpwd != NULL)
+		{
+			new_dir = oldpwd;
+		}
+		else
+		{
+			perror("getenv");
+			return (1);
+		}
 	}
 	else
 	{
-		if (chdir(tokens[1]) != 0)
-		{
-			perror("cd");
-		}
+		new_dir = tokens[1];
 	}
+	if (chdir(new_dir) != 0)
+	{
+		perror("cd");
+		return (1);
+	}
+	if (setenv("PWD", new_dir, 1) != 0)
+	{
+		perror("setenv");
+		return (1);
+	}
+
+	return (0);
 }
 
 /**
@@ -80,6 +105,7 @@ char *find_executable(char *tokens[], char **env)
 	return (executable);
 }
 
+
 /**
  * execute_command - command execution.
  * @tokens: array of strings.
@@ -88,21 +114,18 @@ char *find_executable(char *tokens[], char **env)
  */
 void execute_command(char *tokens[], char **env, int token_count)
 {
-	char *executable = NULL;
-	char *exec_args[MAX_TOKENS];
-	char *err = malloc(100);
-	int i = 0;
+	char *executable = NULL, *exec_args[MAX_TOKENS], *err = malloc(100);
 	pid_t pid;
-	int status = 0, exit_status = 0;
+	int i = 0;
 
 	executable = find_executable(tokens, env);
 	if (executable == NULL)
 	{
 		_strcpy(err, "./hsh: ");
-		_strcat(err, "1: ");
 		_strcat(err, tokens[0]);
 		_strcat(err, ": not found\n");
-		write(STDERR_FILENO, err, _strlen(err));
+		write(2, err, _strlen(err));
+		free(executable);
 		free(err);
 	}
 	else
@@ -119,26 +142,15 @@ void execute_command(char *tokens[], char **env, int token_count)
 				errno = 127;
 				free(executable);
 				free(err);
-				exit(errno);
+				exit(127);
 			}
 			free(executable);
 		}
-		/*else
+		else
 		{
 			waitpid(pid, NULL, 0);
 			free(executable);
-		}*/
-		else
-		{
-                	waitpid(pid, &status, 0);
-                	if (WIFEXITED(status))
-                	{
-                        	exit_status = WEXITSTATUS(status);
-                        	errno = exit_status;
-                	}
-			
 		}
-		free(executable);
 		free(err);
 	}
 }
@@ -171,6 +183,7 @@ int main(int argc, char *argv[], char **env)
 			break;
 		if (line[_strlen(line) - 1] == '\n')
 			line[_strlen(line) - 1] = '\0';
+
 		token_count = tokenize_input(line, tokens, " ");
 		if (token_count == 0)
 			continue;

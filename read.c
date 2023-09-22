@@ -67,14 +67,14 @@ void execute_builtin_exit(char *tokens[])
 {
 	int exit_status = 0;
 
-	if (tokens[1] != NULL)
+	if (tokens[0] != NULL)
 	{
-		if (!_isdigit(tokens[1][0]))
+		if (!_isdigit(tokens[0][0]))
 		{
-			free(tokens[1]);
+			free(tokens[0]);
 			exit(2);
 		}
-		exit_status = _atoi(tokens[1]);
+		exit_status = _atoi(tokens[0]);
 	}
 		free(tokens[0]);
 		exit(exit_status);

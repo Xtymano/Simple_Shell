@@ -12,13 +12,14 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <limits.h>
 
 #define MAX_INPUT_SIZE 1024
 #define MAX_TOKENS 64
 #define MAX_PATH 100
 
 int _atoi(char *str);
-int _isdigit(char c); 
+int _isdigit(char c);
 size_t _strlen(const char *str);
 int _strcmp(const char *str1, const char *str2);
 char *_strdup(const char *src);
